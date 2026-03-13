@@ -98,14 +98,23 @@ LANGSMITH_PROJECT=multi-agents-router-knowledge-base
 From project root:
 
 ```bash
-uv run python my_agent/router_workflow.py
+uv run uvicorn app.main:app --reload --port 8082
 ```
 
-You should see:
+Available endpoints:
 
-- original query
-- selected classifications/sources
-- final synthesized answer
+- API root: `http://127.0.0.1:8082/`
+- Health: `http://127.0.0.1:8082/api/healthz`
+- Readiness: `http://127.0.0.1:8082/api/readyz`
+- Swagger docs: `http://127.0.0.1:8082/docs`
+
+Example query request:
+
+```bash
+curl -X POST "http://127.0.0.1:8082/api/query" \
+  -H "Content-Type: application/json" \
+  -d '{"query":"How do I authenticate API requests?"}'
+```
 
 ## LangSmith Tracing
 

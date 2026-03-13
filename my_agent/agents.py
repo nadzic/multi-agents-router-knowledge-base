@@ -12,7 +12,27 @@ from pathlib import Path
 from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
-from tools import search_code, search_issues, search_prs, search_notion, get_page, search_slack, get_thread
+
+try:
+  from .tools import (
+    search_code,
+    search_issues,
+    search_prs,
+    search_notion,
+    get_page,
+    search_slack,
+    get_thread,
+  )
+except ImportError:
+  from tools import (
+    search_code,
+    search_issues,
+    search_prs,
+    search_notion,
+    get_page,
+    search_slack,
+    get_thread,
+  )
 
 # Load project .env and support OPEN_API_KEY alias.
 load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env")

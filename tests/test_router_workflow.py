@@ -2,7 +2,7 @@
 
 from contextlib import contextmanager
 
-import router_workflow
+from my_agent import router_workflow
 
 
 def _unwrap(func):
@@ -28,15 +28,16 @@ def test_run_demo_invokes_compiled_workflow(monkeypatch):
 
 def test_run_demo_with_tracing_uses_context(monkeypatch):
   """run_demo_with_tracing should enable tracing context and call run_demo."""
-  captured = {"enabled": None, "client": None, "called_query": None}
+  captured = {"enabled": None, "client": None, "called_query": None, "project_name": None}
 
   class FakeClient:
     pass
 
   @contextmanager
-  def fake_tracing_context(enabled, client):
+  def fake_tracing_context(enabled, client, project_name):
     captured["enabled"] = enabled
     captured["client"] = client
+    captured["project_name"] = project_name
     yield
 
   def fake_run_demo(query):
@@ -50,5 +51,6 @@ def test_run_demo_with_tracing_uses_context(monkeypatch):
   result = router_workflow.run_demo_with_tracing("trace me")
   assert captured["enabled"] is True
   assert isinstance(captured["client"], FakeClient)
+  assert isinstance(captured["project_name"], str)
   assert captured["called_query"] == "trace me"
   assert result["final_answer"] == "from run_demo"

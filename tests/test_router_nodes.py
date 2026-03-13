@@ -2,7 +2,7 @@
 
 from types import SimpleNamespace
 
-import router_nodes
+from my_agent import router_nodes
 
 
 def test_classify_query_returns_classifications(monkeypatch):

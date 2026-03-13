@@ -12,10 +12,18 @@ from typing import Any
 from langchain.chat_models import init_chat_model
 from langgraph.types import Send
 
-from agents import github_agent, notion_agent, slack_agent
-from router_prompts import CLASSIFY_SYSTEM_PROMPT, synthesis_system_prompt
-from router_schemas import ClassificationResult
-from state import AgentInput, RouterState
+try:
+  # Package-relative imports for API/runtime usage.
+  from .agents import github_agent, notion_agent, slack_agent
+  from .router_prompts import CLASSIFY_SYSTEM_PROMPT, synthesis_system_prompt
+  from .router_schemas import ClassificationResult
+  from .state import AgentInput, RouterState
+except ImportError:
+  # Script-style fallback for direct module execution.
+  from agents import github_agent, notion_agent, slack_agent
+  from router_prompts import CLASSIFY_SYSTEM_PROMPT, synthesis_system_prompt
+  from router_schemas import ClassificationResult
+  from state import AgentInput, RouterState
 
 # LLM used for classification and final synthesis.
 router_llm = init_chat_model("openai:gpt-4.1-mini")

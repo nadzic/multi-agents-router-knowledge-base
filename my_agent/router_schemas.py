@@ -2,7 +2,10 @@
 
 from pydantic import BaseModel, Field
 
-from state import Classficiation
+try:
+  from .state import Classficiation
+except ImportError:
+  from state import Classficiation
 
 
 class ClassificationResult(BaseModel):

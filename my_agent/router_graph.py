@@ -2,15 +2,28 @@
 
 from langgraph.graph import END, START, StateGraph
 
-from router_nodes import (
-  classify_query,
-  query_github,
-  query_notion,
-  query_slack,
-  route_to_agents,
-  synthesize_results,
-)
-from state import RouterState
+try:
+  # Package-relative imports for API/runtime usage.
+  from .router_nodes import (
+    classify_query,
+    query_github,
+    query_notion,
+    query_slack,
+    route_to_agents,
+    synthesize_results,
+  )
+  from .state import RouterState
+except ImportError:
+  # Script-style fallback for direct module execution.
+  from router_nodes import (
+    classify_query,
+    query_github,
+    query_notion,
+    query_slack,
+    route_to_agents,
+    synthesize_results,
+  )
+  from state import RouterState
 
 
 def build_router_workflow():

@@ -8,9 +8,15 @@ import os
 from pathlib import Path
 
 from dotenv import load_dotenv
-from router_graph import build_router_workflow
 from langsmith import Client
 from langsmith.run_helpers import traceable, tracing_context
+
+try:
+  # Package import path (used by FastAPI and tests).
+  from .router_graph import build_router_workflow
+except ImportError:
+  # Script-style fallback (used when running `python my_agent/router_workflow.py`).
+  from router_graph import build_router_workflow
 
 # Ensure env vars are available for LangSmith/OpenAI initialization.
 load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env")
@@ -35,7 +41,7 @@ def run_demo(query: str) -> dict:
   Returns:
     Final graph state including routing decisions and `final_answer`.
   """
-
+  # Build fresh workflow instance per request for clear isolation in demos.
   workflow = build_router_workflow()
   return workflow.invoke({"query": query})
 
@@ -51,6 +57,7 @@ def run_demo_with_tracing(query: str) -> dict:
   """
 
   client = Client()
+  # Explicit tracing context ensures runs appear under selected project name.
   with tracing_context(
     enabled=True,
     client=client,
