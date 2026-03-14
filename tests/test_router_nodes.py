@@ -2,8 +2,8 @@
 
 from types import SimpleNamespace
 
-from agent.graph.edges import route_to_agents
-from agent.graph.nodes import create_nodes
+from app.agents.graph.edges import route_to_agents
+from app.agents.graph.nodes import create_nodes
 
 
 def test_classify_query_returns_classifications(monkeypatch):

@@ -5,7 +5,7 @@ from typing import Any, Dict
 from langchain.chat_models import init_chat_model
 from langgraph.prebuilt import create_react_agent
 
-from agent.tools import (
+from ..tools import (
   get_page,
   get_thread,
   search_code,

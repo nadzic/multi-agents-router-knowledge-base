@@ -2,7 +2,7 @@
 
 from langgraph.types import Send
 
-from agent.graph.state import RouterState
+from .state import RouterState
 
 
 def route_to_agents(state: RouterState) -> list[Send]:

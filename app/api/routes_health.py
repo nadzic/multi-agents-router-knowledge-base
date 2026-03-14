@@ -56,7 +56,7 @@ async def readyz() -> dict:
   try:
     # Import lazily so readiness can report import/init failures clearly
     # and to avoid doing heavy startup work in module import time.
-    from agent.agent import initialize_workflow
+    from app.agents.agent import initialize_workflow
 
     initialize_workflow()
     checks["workflow"] = "ok"

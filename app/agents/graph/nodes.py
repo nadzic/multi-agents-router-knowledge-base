@@ -4,7 +4,7 @@ from typing import Any, Dict
 
 from pydantic import BaseModel, Field
 
-from agent.graph.state import AgentInput, Classification, RouterState
+from .state import AgentInput, Classification, RouterState
 
 CLASSIFY_SYSTEM_PROMPT = """Analyze this query and determine which knowledge bases to consult.
 For each relevant source, generate a targeted sub-question optimized for that source.

@@ -2,7 +2,7 @@
 
 from contextlib import contextmanager
 
-from agent import agent as router_agent
+from app.agents import agent as router_agent
 
 
 def _unwrap(func):

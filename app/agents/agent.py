@@ -1,6 +1,6 @@
 """Top-level agent entrypoints.
 
-This module exposes the public functions used by API routes and scripts.
+This module exposes public functions used by API routes and scripts.
 """
 
 import os
@@ -10,11 +10,11 @@ from dotenv import load_dotenv
 from langsmith import Client
 from langsmith.run_helpers import traceable, tracing_context
 
-from agent.graph import build_workflow
-from agent.llm.model import create_source_agents, init_router_model, init_source_model
+from .graph import build_workflow
+from .llm.model import create_source_agents, init_router_model, init_source_model
 
 # Load project .env and support OPEN_API_KEY alias.
-load_dotenv(dotenv_path=Path(__file__).resolve().parent.parent / ".env")
+load_dotenv(dotenv_path=Path(__file__).resolve().parents[2] / ".env")
 if not os.getenv("OPENAI_API_KEY") and os.getenv("OPEN_API_KEY"):
   os.environ["OPENAI_API_KEY"] = os.environ["OPEN_API_KEY"]
 
@@ -35,7 +35,7 @@ def initialize_workflow():
   return build_workflow(router_llm, source_agents)
 
 
-@traceable(name="agent.run_query", run_type="chain")
+@traceable(name="agents.run_query", run_type="chain")
 def run_query(query: str) -> dict:
   """Run query against compiled router workflow."""
   workflow = initialize_workflow()

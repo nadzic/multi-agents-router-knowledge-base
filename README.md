@@ -25,30 +25,33 @@ Modern teams keep knowledge in multiple places. This project shows how to:
 ## Project Structure
 
 ```text
-agent/
-  __init__.py          # Package exports (public agent entrypoints)
-  graph/
-    __init__.py        # Graph builder package entrypoint
-    state.py           # Typed graph state
-    nodes.py           # Node logic (classify/query/synthesize)
-    edges.py           # Routing/fan-out edge helpers
-  tools/
-    __init__.py        # Tool exports used by the LLM model factory
-    github.py          # GitHub tools (code/issues/PRs)
-    notion.py          # Notion tools (search/page fetch)
-    slack.py           # Slack tools (search/thread fetch)
-  llm/
-    __init__.py        # LLM package marker/entrypoint
-    model.py           # Model + source-agent factory helpers
-  agent.py             # Top-level workflow entrypoints
-
 app/
+  __init__.py
+  agents/
+    __init__.py        # Package exports (public agent entrypoints)
+    graph/
+      __init__.py      # Graph builder package entrypoint
+      state.py         # Typed graph state
+      nodes.py         # Node logic (classify/query/synthesize)
+      edges.py         # Routing/fan-out edge helpers
+    tools/
+      __init__.py      # Tool exports used by the LLM model factory
+      github.py        # GitHub tools (code/issues/PRs)
+      notion.py        # Notion tools (search/page fetch)
+      slack.py         # Slack tools (search/thread fetch)
+    llm/
+      __init__.py      # LLM package marker/entrypoint
+      model.py         # Model + source-agent factory helpers
+    agent.py           # Top-level workflow entrypoints
+
   api/
+    __init__.py
+    main.py            # FastAPI app wiring
     routes_query.py    # POST /api/query
     routes_health.py   # /api/healthz + /api/readyz
-  schemas/
-    query.py           # API request/response schemas
-  main.py              # FastAPI app wiring
+    schemas/
+      __init__.py
+      query.py         # API request/response schemas
 
 main.py                # CLI demo entrypoint
 ```
@@ -108,14 +111,14 @@ LANGSMITH_API_KEY=your_langsmith_key
 LANGSMITH_PROJECT=multi-agents-router-knowledge-base
 ```
 
-`OPEN_API_KEY` is also supported as an alias in `agent/agent.py`.
+`OPEN_API_KEY` is also supported as an alias in `app/agents/agent.py`.
 
 ## Run
 
 From project root:
 
 ```bash
-uv run uvicorn app.main:app --reload --port 8082
+uv run uvicorn app.api.main:app --reload --port 8082
 ```
 
 Available endpoints:
@@ -135,7 +138,7 @@ curl -X POST "http://127.0.0.1:8082/api/query" \
 
 ## LangSmith Tracing
 
-Tracing is enabled explicitly in `agent/agent.py`:
+Tracing is enabled explicitly in `app/agents/agent.py`:
 
 - `run_query()` is decorated with `@traceable(...)`
 - `run_query_with_tracing()` wraps execution in `tracing_context(...)`

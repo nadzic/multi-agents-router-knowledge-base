@@ -4,9 +4,9 @@ from typing import Any, Dict
 
 from langgraph.graph import END, START, StateGraph
 
-from agent.graph.edges import route_to_agents
-from agent.graph.nodes import create_nodes
-from agent.graph.state import RouterState
+from .edges import route_to_agents
+from .nodes import create_nodes
+from .state import RouterState
 
 
 def build_workflow(router_llm: Any, source_agents: Dict[str, Any]):

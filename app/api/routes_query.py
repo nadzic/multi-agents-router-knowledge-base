@@ -2,8 +2,8 @@
 
 from fastapi import APIRouter, HTTPException
 
-from app.schemas.query import QueryRequest, QueryResponse
-from agent.agent import run_query_with_tracing
+from app.agents.agent import run_query_with_tracing
+from app.api.schemas.query import QueryRequest, QueryResponse
 
 router: APIRouter = APIRouter()
 

@@ -1,7 +1,8 @@
 """State contracts used by the router graph."""
 
-from typing import Annotated, Literal
 import operator
+from typing import Annotated, Literal
+
 from typing_extensions import NotRequired, TypedDict
 
 

@@ -1,6 +1,6 @@
 """CLI-style demo entrypoint."""
 
-from agent.agent import run_query_with_tracing
+from app.agents.agent import run_query_with_tracing
 
 
 def main():
