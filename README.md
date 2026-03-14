@@ -25,15 +25,32 @@ Modern teams keep knowledge in multiple places. This project shows how to:
 ## Project Structure
 
 ```text
-my_agent/
-  agents.py            # Source-specific agent instances (GitHub/Notion/Slack)
-  tools.py             # Tool functions each agent can call
-  state.py             # Typed state for graph nodes
-  router_prompts.py    # Classification + synthesis prompts
-  router_schemas.py    # Structured output schema for classifier
-  router_nodes.py      # Node logic (classify, query agents, synthesize)
-  router_graph.py      # Graph construction and edges
-  router_workflow.py   # Thin entrypoint / demo runner
+agent/
+  __init__.py          # Package exports (public agent entrypoints)
+  graph/
+    __init__.py        # Graph builder package entrypoint
+    state.py           # Typed graph state
+    nodes.py           # Node logic (classify/query/synthesize)
+    edges.py           # Routing/fan-out edge helpers
+  tools/
+    __init__.py        # Tool exports used by the LLM model factory
+    github.py          # GitHub tools (code/issues/PRs)
+    notion.py          # Notion tools (search/page fetch)
+    slack.py           # Slack tools (search/thread fetch)
+  llm/
+    __init__.py        # LLM package marker/entrypoint
+    model.py           # Model + source-agent factory helpers
+  agent.py             # Top-level workflow entrypoints
+
+app/
+  api/
+    routes_query.py    # POST /api/query
+    routes_health.py   # /api/healthz + /api/readyz
+  schemas/
+    query.py           # API request/response schemas
+  main.py              # FastAPI app wiring
+
+main.py                # CLI demo entrypoint
 ```
 
 ## How It Works
@@ -91,7 +108,7 @@ LANGSMITH_API_KEY=your_langsmith_key
 LANGSMITH_PROJECT=multi-agents-router-knowledge-base
 ```
 
-`OPEN_API_KEY` is also supported as an alias in `my_agent/agents.py`.
+`OPEN_API_KEY` is also supported as an alias in `agent/agent.py`.
 
 ## Run
 
@@ -118,10 +135,10 @@ curl -X POST "http://127.0.0.1:8082/api/query" \
 
 ## LangSmith Tracing
 
-Tracing is enabled explicitly in `my_agent/router_workflow.py`:
+Tracing is enabled explicitly in `agent/agent.py`:
 
-- `run_demo()` is decorated with `@traceable(...)`
-- `run_demo_with_tracing()` wraps execution in `tracing_context(...)`
+- `run_query()` is decorated with `@traceable(...)`
+- `run_query_with_tracing()` wraps execution in `tracing_context(...)`
 - project name resolution order:
   - `LANGSMITH_PROJECT`
   - `LANGCHAIN_PROJECT`
@@ -163,6 +180,5 @@ Current suite covers:
 
 ## Next Improvements
 
-- Convert `my_agent` to a package-safe import layout (`my_agent.*`) for both script and module execution styles.
 - Add observability/tracing for node timings and token usage.
 - Replace mock-style tool outputs with real GitHub/Notion/Slack API integrations.

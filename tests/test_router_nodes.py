@@ -2,7 +2,8 @@
 
 from types import SimpleNamespace
 
-from my_agent import router_nodes
+from agent.graph.edges import route_to_agents
+from agent.graph.nodes import create_nodes
 
 
 def test_classify_query_returns_classifications(monkeypatch):
@@ -21,16 +22,16 @@ def test_classify_query_returns_classifications(monkeypatch):
     def with_structured_output(self, _schema):
       return FakeStructuredLLM()
 
-  monkeypatch.setattr(router_nodes, "router_llm", FakeLLM())
+  nodes = create_nodes(FakeLLM(), {"github": object(), "notion": object(), "slack": object()})
 
-  patch = router_nodes.classify_query({"query": "How do we authenticate API requests?"})
+  patch = nodes["classify_query"]({"query": "How do we authenticate API requests?"})
   assert patch == {"classifications": expected}
 
 
 def test_route_to_agents_builds_send_payloads():
   """Router should emit one Send per classification with AgentInput payload."""
 
-  sends = router_nodes.route_to_agents(
+  sends = route_to_agents(
     {
       "query": "q",
       "classifications": [
@@ -51,7 +52,8 @@ def test_invoke_domain_agent_normalizes_output():
     def invoke(self, _payload):
       return {"messages": [SimpleNamespace(content="result from source")]}
 
-  patch = router_nodes._invoke_domain_agent(FakeAgent(), "github", "sub-query")
+  nodes = create_nodes(object(), {"github": FakeAgent(), "notion": FakeAgent(), "slack": FakeAgent()})
+  patch = nodes["query_github"]({"query": "sub-query"})
   assert patch == {
     "results": [{"source": "github", "result": "result from source"}]
   }
@@ -60,11 +62,12 @@ def test_invoke_domain_agent_normalizes_output():
 def test_synthesize_results_returns_default_when_empty():
   """Synthesis node should return a default answer when no results exist."""
 
-  patch = router_nodes.synthesize_results({"query": "q", "results": []})
+  nodes = create_nodes(object(), {"github": object(), "notion": object(), "slack": object()})
+  patch = nodes["synthesize_results"]({"query": "q", "results": []})
   assert patch == {"final_answer": "No results found from any source."}
 
 
-def test_synthesize_results_formats_and_invokes_llm(monkeypatch):
+def test_synthesize_results_formats_and_invokes_llm():
   """Synthesis node should send formatted source results to the LLM."""
   captured_messages = {}
 
@@ -73,9 +76,9 @@ def test_synthesize_results_formats_and_invokes_llm(monkeypatch):
       captured_messages["value"] = messages
       return SimpleNamespace(content="Combined final answer")
 
-  monkeypatch.setattr(router_nodes, "router_llm", FakeLLM())
+  nodes = create_nodes(FakeLLM(), {"github": object(), "notion": object(), "slack": object()})
 
-  patch = router_nodes.synthesize_results(
+  patch = nodes["synthesize_results"](
     {
       "query": "How do I authenticate API requests?",
       "results": [

@@ -3,7 +3,7 @@
 from fastapi import APIRouter, HTTPException
 
 from app.schemas.query import QueryRequest, QueryResponse
-from my_agent.router_workflow import run_demo_with_tracing
+from agent.agent import run_query_with_tracing
 
 router: APIRouter = APIRouter()
 
@@ -22,7 +22,7 @@ async def query(request: QueryRequest) -> QueryResponse:
   """
 
   try:
-    result = run_demo_with_tracing(request.query)
+    result = run_query_with_tracing(request.query)
     # Map workflow state shape into API response schema.
     return QueryResponse(
       query=result["query"],

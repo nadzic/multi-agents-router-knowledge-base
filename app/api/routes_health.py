@@ -56,9 +56,9 @@ async def readyz() -> dict:
   try:
     # Import lazily so readiness can report import/init failures clearly
     # and to avoid doing heavy startup work in module import time.
-    from my_agent.router_graph import build_router_workflow
+    from agent.agent import initialize_workflow
 
-    build_router_workflow()
+    initialize_workflow()
     checks["workflow"] = "ok"
   except Exception as exc:
     is_ready = False
